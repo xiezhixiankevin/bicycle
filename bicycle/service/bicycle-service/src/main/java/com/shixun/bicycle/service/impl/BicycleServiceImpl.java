@@ -9,6 +9,7 @@ import com.shixun.bicycle.pojo.FixInfo;
 import com.shixun.bicycle.service.BicycleFaultService;
 import com.shixun.bicycle.service.BicycleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.shixun.bicycle.utils.ApplicationContextProvider;
 import com.shixun.bicycle.utils.DistanceUtil;
 import org.springframework.stereotype.Service;
 
@@ -35,7 +36,7 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
     @Override
     public List<Bicycle> listFaultBicycles(Integer faultId) {
         if(faultId != null){
-            BicycleFaultService bicycleFaultService = new BicycleFaultServiceImpl();
+            BicycleFaultService bicycleFaultService = ApplicationContextProvider.getBean(BicycleFaultService.class);
             List<BicycleFault> bicycleFaults = bicycleFaultService.listByFaultId(faultId);
             if(bicycleFaults != null){
                 List<Integer> ids = new ArrayList<>();
@@ -46,7 +47,9 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
             }
             return new ArrayList<>();
         }
-        return list(null);
+        QueryWrapper<Bicycle> bicycleQueryWrapper = new QueryWrapper<>();
+        bicycleQueryWrapper.eq("state",2);
+        return list(bicycleQueryWrapper);
     }
 
     @Override
@@ -76,13 +79,15 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
             return 0; // 单车正在使用
         }
 
-        BicycleFaultService bicycleFaultService = new BicycleFaultServiceImpl();
+        BicycleFaultService bicycleFaultService = ApplicationContextProvider.getBean(BicycleFaultService.class);
 
         UpdateWrapper<Bicycle> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id",bicycleId);
         updateWrapper.ne("state",1);
-        updateWrapper.set("state",2);
-        update(null,updateWrapper);
+
+        bicycle = new Bicycle();
+        bicycle.setState(2);
+        update(bicycle,updateWrapper);
 
         bicycleFaultService.save(new BicycleFault(bicycleId,faultId,new Date()));
         return 1;
@@ -91,7 +96,7 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
     @Override
     public Integer fixBicycleFault(FixInfo fixInfo) {
 
-        BicycleFaultService bicycleFaultService = new BicycleFaultServiceImpl();
+        BicycleFaultService bicycleFaultService = ApplicationContextProvider.getBean(BicycleFaultService.class);
         QueryWrapper<BicycleFault> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("bicycle_id",fixInfo.getBicycleId());
         queryWrapper.in("fault_id",fixInfo.getFaultIds());
@@ -109,8 +114,10 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         // 完全修好了
         UpdateWrapper<Bicycle> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id",fixInfo.getBicycleId());
-        updateWrapper.set("state",3);
-        update(null,updateWrapper);
+
+        Bicycle bicycle = new Bicycle();
+        bicycle.setState(3);
+        update(bicycle,updateWrapper);
         return 1;
     }
 
@@ -134,8 +141,10 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         UpdateWrapper<Bicycle> updateWrapper = new UpdateWrapper<>();
         updateWrapper.in("id",list);
         updateWrapper.eq("state",3);
-        updateWrapper.set("state",0);
-        update(null,updateWrapper);
+
+        Bicycle bicycle = new Bicycle();
+        bicycle.setState(0);
+        update(bicycle,updateWrapper);
     }
 
     @Override
@@ -143,5 +152,10 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         QueryWrapper<Bicycle> bicycleQueryWrapper = new QueryWrapper<>();
         bicycleQueryWrapper.eq("state",3);
         return list(bicycleQueryWrapper);
+    }
+
+    @Override
+    public void addBicycles(List<Bicycle> bicycles) {
+        saveBatch(bicycles);
     }
 }

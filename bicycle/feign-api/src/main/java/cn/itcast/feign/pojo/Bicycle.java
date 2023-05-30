@@ -26,19 +26,19 @@ public class Bicycle implements Serializable {
     @TableId(value = "id", type = IdType.AUTO)
     private Integer id;
 
-    private Double jd;
+    private Double jd = 39.952536;
 
-    private Double wd;
+    private Double wd = 116.34348;
 
     /**
-     * 0空闲，1使用，2故障
+     * 0空闲，1使用，2故障,3带投入使用
      */
-    private Integer state;
+    private Integer state = 0;
 
     /**
      * 停车区域id
      */
-    private Integer area;
+    private Integer area = 0;
 
 
 }

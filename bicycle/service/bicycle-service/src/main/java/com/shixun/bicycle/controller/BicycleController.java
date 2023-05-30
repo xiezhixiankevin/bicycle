@@ -2,6 +2,7 @@ package com.shixun.bicycle.controller;
 
 
 import cn.itcast.feign.common.R;
+import cn.itcast.feign.pojo.Bicycle;
 import com.alibaba.fastjson.JSONObject;
 import com.shixun.bicycle.pojo.FixInfo;
 import com.shixun.bicycle.service.BicycleService;
@@ -23,6 +24,21 @@ public class BicycleController {
     @Autowired
     private BicycleService bicycleService;
 
+    /**
+     * 添加单车
+     * @param num:要添加的单车数量
+     *
+     */
+    @PostMapping("/add-bicycles")
+    public R addBicycles(Integer num){
+        List<Bicycle> bicycles = new ArrayList<>();
+        for (int i = 0; i < num; i++) {
+            bicycles.add(new Bicycle());
+        }
+        bicycleService.addBicycles(bicycles);
+        return R.ok();
+    }
+
     // 获取某一类故障的所有单车，不传参数获取所有故障单车
     @GetMapping("/list-fault-bicycles")
     public R listFaultBicycles(Integer faultId){
@@ -39,7 +55,7 @@ public class BicycleController {
     @PostMapping("/add-fault-bicycle")
     public R addFaultBicycle(Integer bicycleId,Integer faultId){
         Integer result = bicycleService.addFaultBicycle(bicycleId,faultId);
-        if(result == 0){
+        if(result == 1){
             return R.ok();
         }
         return R.error();

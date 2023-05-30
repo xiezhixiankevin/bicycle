@@ -36,6 +36,8 @@ public interface BicycleService extends IService<Bicycle> {
 
     List<Bicycle> getFixedBicycles();
 
+    void addBicycles(List<Bicycle> bicycles);
+
     // 增删改查
 
     //

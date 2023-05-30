@@ -28,7 +28,7 @@ public class Fault implements Serializable {
 
     private String name;
 
-    private String level;
+    private Integer level;
 
 
 }
