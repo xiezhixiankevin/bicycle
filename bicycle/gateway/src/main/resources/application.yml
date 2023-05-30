@@ -18,6 +18,14 @@ spring:
                 pattern: /user/**
           filters:
             - StripPrefix=1
+        - id: bicycle-service
+            uri: lb://bicycleservice
+            predicates:
+              - name: Path
+                args:
+                  pattern: /bicycle/**
+            filters:
+              - StripPrefix=1
 management:
   endpoints:
     web:
