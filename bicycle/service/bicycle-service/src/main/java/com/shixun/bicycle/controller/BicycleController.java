@@ -2,10 +2,7 @@ package com.shixun.bicycle.controller;
 
 
 import cn.itcast.feign.common.R;
-import cn.itcast.feign.pojo.Fault;
-import com.shixun.bicycle.service.BicycleFaultService;
 import com.shixun.bicycle.service.BicycleService;
-import com.shixun.bicycle.service.FaultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -51,6 +48,11 @@ public class BicycleController {
 
     @PostMapping("/lock")
     public R lock(){
+        return R.ok();
+    }
+
+    @GetMapping("/get-best-stop-point")
+    public R getBestStopPoint(){
         return R.ok();
     }
 
