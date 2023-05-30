@@ -1,9 +1,10 @@
 package com.shixun.bicycle.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import cn.itcast.feign.common.R;
+import com.shixun.bicycle.service.AreaService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -17,5 +18,27 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/area")
 public class AreaController {
 
+    @Autowired
+    private AreaService areaService;
+
+    @GetMapping("/list-areas")
+    public R listAreas(){
+        return R.ok();
+    }
+
+    @PostMapping("/add-area")
+    public R addArea(){
+        return R.ok();
+    }
+
+    @PutMapping("/update-area")
+    public R updateArea(){
+        return R.ok();
+    }
+
+    @PostMapping("/get-best-stop-area")
+    public R getBestStopArea(){
+        return R.ok();
+    }
 }
 

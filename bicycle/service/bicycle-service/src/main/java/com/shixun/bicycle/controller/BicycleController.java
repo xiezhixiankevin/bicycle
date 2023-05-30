@@ -1,9 +1,13 @@
 package com.shixun.bicycle.controller;
 
 
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RestController;
+import cn.itcast.feign.common.R;
+import cn.itcast.feign.pojo.Fault;
+import com.shixun.bicycle.service.BicycleFaultService;
+import com.shixun.bicycle.service.BicycleService;
+import com.shixun.bicycle.service.FaultService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * <p>
@@ -16,6 +20,41 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/bicycle")
 public class BicycleController {
+    @Autowired
+    private BicycleService bicycleService;
+
+
+    @GetMapping("/list-by-fault-id")
+    public R listByFaultId(){
+        return R.ok();
+    }
+
+    @GetMapping("/list-by-area-id")
+    public R listByAreaId(){
+        return R.ok();
+    }
+
+    @PostMapping("/add-fault-bicycle")
+    public R addFaultBicycle(){
+        return R.ok();
+    }
+
+    @PutMapping("/fix-bicycle")
+    public R fixBicycle(){
+        return R.ok();
+    }
+
+    @PostMapping("/open-lock")
+    public R openLock(){
+        return R.ok();
+    }
+
+    @PostMapping("/lock")
+    public R lock(){
+        return R.ok();
+    }
+
+
 
 }
 
