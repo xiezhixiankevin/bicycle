@@ -5,6 +5,8 @@ import cn.itcast.feign.pojo.pack.UserPack;
 import cn.itcast.feign.util.JWTUtils;
 import com.app.shippingapplication.mapper.TUserMapper;
 import com.app.shippingapplication.service.TUserService;
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.JWTCreator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.dao.DuplicateKeyException;
@@ -66,12 +68,16 @@ public class TUserServiceImpl extends ServiceImpl<TUserMapper, TUser> implements
         TUser userAccount = getOne(queryWrapper);
         if(userAccount != null){
             // 生成token
-            Map<String,String> map = new HashMap<>();
-            map.put("user_id",userAccount.getUserId().toString());
-            map.put("email",email);
-            map.put("username",userAccount.getUserName());
-            map.put("identify",userAccount.getIdentify().toString());
-            String token = JWTUtils.getToken(map);
+
+            //创建jwt builder
+            JWTCreator.Builder builder = JWT.create();
+
+            builder.withClaim("user_id",userAccount.getUserId());
+            builder.withClaim("email",email);
+            builder.withClaim("username",userAccount.getUserName());
+            builder.withClaim("identify",userAccount.getIdentify());
+
+            String token = JWTUtils.getToken(builder);
 
             UserPack userPack = new UserPack();
             userPack.setUserEmail(email);

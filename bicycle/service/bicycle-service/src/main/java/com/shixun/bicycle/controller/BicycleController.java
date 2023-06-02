@@ -76,7 +76,7 @@ public class BicycleController {
     public R fixBicycle(String params){
         FixInfo fixInfo = JSONObject.parseObject(params, FixInfo.class);
         Integer result = bicycleService.fixBicycleFault(fixInfo);
-        if(result == 0){
+        if(result == 1){
             return R.ok();
         }
         return R.error();
@@ -90,7 +90,7 @@ public class BicycleController {
 
     /**
      * 将修好的车投入运行
-     * @param params:json格式字符串，数组
+     * @param params:json格式字符串，自行车id数组
      *
      */
     @PutMapping("/add-running-bicycles")
@@ -103,18 +103,19 @@ public class BicycleController {
     private TUser getUserInfoFromToken(String token){
         DecodedJWT tokenInfo = JWTUtils.getTokenInfo(token);
         TUser user = new TUser();
-        user.setUserId(Integer.valueOf(tokenInfo.getClaim("user").toString()));
-        user.setUserEmail(tokenInfo.getClaim("email").toString());
-        user.setUserName(tokenInfo.getClaim("username").toString());
+        user.setUserId(tokenInfo.getClaim("user_id").asInt());
+        user.setIdentify(tokenInfo.getClaim("identify").asInt());
+        user.setUserEmail(tokenInfo.getClaim("email").asString());
+        user.setUserName(tokenInfo.getClaim("username").asString());
         return user;
     }
 
     // 开锁
     @PostMapping("/open-lock")
-    public R openLock(Integer bicycleId, HttpServletRequest request){
-        String token = request.getParameter("token");
+    public R openLock(Integer bicycleId,HttpServletRequest request){
+        String token = request.getHeader("token");
         Integer result = bicycleService.openLock(bicycleId,getUserInfoFromToken(token));
-        if(result == 0){
+        if(result == 1){
             return R.ok();
         }
         return R.error();
@@ -122,10 +123,10 @@ public class BicycleController {
 
     // 锁住
     @PostMapping("/lock")
-    public R lock(Bicycle bicycle, HttpServletRequest request){
-        String token = request.getParameter("token");
+    public R lock(Bicycle bicycle,HttpServletRequest request){
+        String token = request.getHeader("token");
         Integer result = bicycleService.Lock(bicycle,getUserInfoFromToken(token));
-        if(result == 0){
+        if(result == 1){
             return R.ok();
         }
         return R.error();
@@ -145,7 +146,7 @@ public class BicycleController {
     }
 
     // 获取当前所有单车的轨迹信息
-    @GetMapping("/get-bicycle-trails")
+    @PostMapping("/get-bicycle-trails")
     public R getBicycleTrails(){
         return R.ok().data("trail_info",bicycleService.getTrails());
     }

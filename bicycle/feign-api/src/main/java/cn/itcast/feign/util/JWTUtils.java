@@ -17,19 +17,11 @@ public class JWTUtils {
     private static final String SING = "xzxshisb";
 
 
-    public static String getToken(Map<String, String> map) {
+    public static String getToken(JWTCreator.Builder builder) {
 
         Calendar instance = Calendar.getInstance();
         // 默认1天过期
         instance.add(Calendar.DATE, 1);
-
-        //创建jwt builder
-        JWTCreator.Builder builder = JWT.create();
-
-        // payload
-        map.forEach((k, v) -> {
-            builder.withClaim(k, v);
-        });
 
         String token = builder.withExpiresAt(instance.getTime())  //指定令牌过期时间
                 .sign(Algorithm.HMAC256(SING));  // sign

@@ -27,6 +27,6 @@ public class BicycleUsing {
 
     private String userEmail;
 
-    private List<Location> trails;
+    private List<Location> trails = new ArrayList<>();
 
 }
