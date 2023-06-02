@@ -110,7 +110,10 @@ public class BicycleController {
         return user;
     }
 
-    // 开锁
+    /**
+     * 开锁
+     * 传单车id
+     * */
     @PostMapping("/open-lock")
     public R openLock(Integer bicycleId,HttpServletRequest request){
         String token = request.getHeader("token");
@@ -121,7 +124,10 @@ public class BicycleController {
         return R.error();
     }
 
-    // 锁住
+    /**
+     * 锁住
+     * 传单车id
+     * */
     @PostMapping("/lock")
     public R lock(Bicycle bicycle,HttpServletRequest request){
         String token = request.getHeader("token");
@@ -138,14 +144,20 @@ public class BicycleController {
         return R.ok();
     }
 
-    // 上传单车的轨迹信息
+    /**
+     * 上传单车的轨迹信息
+     * 传id,经纬度
+     * */
     @PostMapping("/post-bicycle-trails")
     public R postBicycleTrails(Bicycle bicycle,HttpServletRequest request){
         String token = request.getParameter("token");
         return R.ok().data("trail_info",bicycleService.postBicycleTrails(bicycle,getUserInfoFromToken(token)));
     }
 
-    // 获取当前所有单车的轨迹信息
+    /**
+     * 获取当前所有单车的轨迹信息
+     *
+     * */
     @PostMapping("/get-bicycle-trails")
     public R getBicycleTrails(){
         return R.ok().data("trail_info",bicycleService.getTrails());
