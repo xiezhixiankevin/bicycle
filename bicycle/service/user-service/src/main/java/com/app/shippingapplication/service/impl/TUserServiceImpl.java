@@ -67,6 +67,7 @@ public class TUserServiceImpl extends ServiceImpl<TUserMapper, TUser> implements
         if(userAccount != null){
             // 生成token
             Map<String,String> map = new HashMap<>();
+            map.put("user_id",userAccount.getUserId().toString());
             map.put("email",email);
             map.put("username",userAccount.getUserName());
             map.put("identify",userAccount.getIdentify().toString());

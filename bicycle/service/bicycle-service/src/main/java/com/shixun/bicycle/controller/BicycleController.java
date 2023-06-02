@@ -3,11 +3,16 @@ package com.shixun.bicycle.controller;
 
 import cn.itcast.feign.common.R;
 import cn.itcast.feign.pojo.Bicycle;
+import cn.itcast.feign.pojo.TUser;
+import cn.itcast.feign.util.JWTUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.shixun.bicycle.pojo.FixInfo;
 import com.shixun.bicycle.service.BicycleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
+import javax.servlet.http.HttpServletRequest;
 import java.util.*;
 
 /**
@@ -95,10 +100,20 @@ public class BicycleController {
         return R.ok();
     }
 
+    private TUser getUserInfoFromToken(String token){
+        DecodedJWT tokenInfo = JWTUtils.getTokenInfo(token);
+        TUser user = new TUser();
+        user.setUserId(Integer.valueOf(tokenInfo.getClaim("user").toString()));
+        user.setUserEmail(tokenInfo.getClaim("email").toString());
+        user.setUserName(tokenInfo.getClaim("username").toString());
+        return user;
+    }
+
     // 开锁
     @PostMapping("/open-lock")
-    public R openLock(Integer bicycleId){
-        Integer result = bicycleService.openLock(bicycleId);
+    public R openLock(Integer bicycleId, HttpServletRequest request){
+        String token = request.getParameter("token");
+        Integer result = bicycleService.openLock(bicycleId,getUserInfoFromToken(token));
         if(result == 0){
             return R.ok();
         }
@@ -107,8 +122,9 @@ public class BicycleController {
 
     // 锁住
     @PostMapping("/lock")
-    public R lock(Integer bicycleId){
-        Integer result = bicycleService.Lock(bicycleId);
+    public R lock(Bicycle bicycle, HttpServletRequest request){
+        String token = request.getParameter("token");
+        Integer result = bicycleService.Lock(bicycle,getUserInfoFromToken(token));
         if(result == 0){
             return R.ok();
         }
@@ -119,6 +135,13 @@ public class BicycleController {
     @GetMapping("/get-best-stop-point")
     public R getBestStopPoint(){
         return R.ok();
+    }
+
+    // 上传单车的轨迹信息
+    @PostMapping("/post-bicycle-trails")
+    public R postBicycleTrails(Bicycle bicycle,HttpServletRequest request){
+        String token = request.getParameter("token");
+        return R.ok().data("trail_info",bicycleService.postBicycleTrails(bicycle,getUserInfoFromToken(token)));
     }
 
     // 获取当前所有单车的轨迹信息

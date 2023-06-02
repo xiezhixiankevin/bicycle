@@ -1,6 +1,8 @@
 package com.shixun.bicycle.service;
 
 import cn.itcast.feign.pojo.Bicycle;
+import cn.itcast.feign.pojo.TUser;
+import cn.itcast.feign.pojo.pack.BicycleUsing;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shixun.bicycle.pojo.FixInfo;
 
@@ -26,17 +28,19 @@ public interface BicycleService extends IService<Bicycle> {
 
     Integer fixBicycleFault(FixInfo fixInfo);
 
-    Integer openLock(Integer bicycleId);
+    Integer openLock(Integer bicycleId, TUser user);
 
-    Integer Lock(Integer bicycleId);
+    Integer Lock(Bicycle bicycle,TUser user);
 
-    Map<Bicycle,List<Double>> getTrails();
+    List<BicycleUsing> getTrails();
 
     void addRunnableBicycles(List<Integer> list);
 
     List<Bicycle> getFixedBicycles();
 
     void addBicycles(List<Bicycle> bicycles);
+
+    Object postBicycleTrails(Bicycle bicycle, TUser user);
 
     // 增删改查
 
