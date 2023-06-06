@@ -125,17 +125,21 @@ public class TokenInterceptor implements GlobalFilter {
             // 验证令牌
             DecodedJWT verify = JWTUtils.verify(token);
         } catch (SignatureVerificationException e) {
-            e.printStackTrace();
             map.put("message","无效签名！");
+            map.put("success",false);  // 设置状态
+            return getVoidMono(serverHttpResponse, map);
         }catch (TokenExpiredException e){
-            e.printStackTrace();
             map.put("message","token过期");
+            map.put("success",false);  // 设置状态
+            return getVoidMono(serverHttpResponse, map);
         }catch (AlgorithmMismatchException e){
-            e.printStackTrace();
             map.put("message","算法不一致");
+            map.put("success",false);  // 设置状态
+            return getVoidMono(serverHttpResponse, map);
         }catch (Exception e){
-            e.printStackTrace();
             map.put("message","token无效！");
+            map.put("success",false);  // 设置状态
+            return getVoidMono(serverHttpResponse, map);
         }
         return chain.filter(exchange);
     }

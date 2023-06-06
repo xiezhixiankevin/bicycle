@@ -1,18 +1,17 @@
 package com.shixun.bicycle.service.impl;
 
-import cn.itcast.feign.pojo.Bicycle;
-import cn.itcast.feign.pojo.BicycleFault;
-import cn.itcast.feign.pojo.Location;
-import cn.itcast.feign.pojo.TUser;
+import cn.itcast.feign.pojo.*;
 import cn.itcast.feign.pojo.pack.BicycleUsing;
 import com.alibaba.fastjson.JSONObject;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.shixun.bicycle.mapper.BicycleMapper;
+import com.shixun.bicycle.pojo.BicycleWithFault;
 import com.shixun.bicycle.pojo.FixInfo;
 import com.shixun.bicycle.service.BicycleFaultService;
 import com.shixun.bicycle.service.BicycleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.shixun.bicycle.service.FaultService;
 import com.shixun.bicycle.utils.ApplicationContextProvider;
 import com.shixun.bicycle.utils.DistanceUtil;
 import com.shixun.bicycle.utils.RedisMapTools;
@@ -47,7 +46,7 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
     }
 
     @Override
-    public List<Bicycle> listFaultBicycles(Integer faultId) {
+    public List<BicycleWithFault> listFaultBicycles(Integer faultId) {
         if(faultId != null){
             BicycleFaultService bicycleFaultService = ApplicationContextProvider.getBean(BicycleFaultService.class);
             List<BicycleFault> bicycleFaults = bicycleFaultService.listByFaultId(faultId);
@@ -56,13 +55,51 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
                 for (BicycleFault bicycleFault : bicycleFaults) {
                     ids.add(bicycleFault.getBicycleId());
                 }
-                return listBicyclesByIds(ids);
+                FaultService faultService = ApplicationContextProvider.getBean(FaultService.class);
+                Fault fault = faultService.getById(faultId);
+                QueryWrapper<Bicycle> bicycleQueryWrapper = new QueryWrapper<>();
+                bicycleQueryWrapper.in("id",ids);
+                List<Bicycle> bicycleList = list(bicycleQueryWrapper);
+                List<BicycleWithFault> bicycleWithFaultList = new ArrayList<>();
+                for (Bicycle bicycle : bicycleList) {
+                    ArrayList<Fault> faults = new ArrayList<>();
+                    faults.add(fault);
+                    bicycleWithFaultList.add(new BicycleWithFault(bicycle,faults));
+                }
+                return bicycleWithFaultList;
             }
             return new ArrayList<>();
         }
         QueryWrapper<Bicycle> bicycleQueryWrapper = new QueryWrapper<>();
         bicycleQueryWrapper.eq("state",Bicycle.FAULT);
-        return list(bicycleQueryWrapper);
+        List<Bicycle> bicycleList = list(bicycleQueryWrapper);
+        if (bicycleList == null){
+            return new ArrayList<>();
+        }
+        return generateBicycleWithFault(bicycleList);
+    }
+
+    public List<BicycleWithFault> generateBicycleWithFault(List<Bicycle> bicycleList){
+        BicycleFaultService bicycleFaultService = ApplicationContextProvider.getBean(BicycleFaultService.class);
+        FaultService faultService = ApplicationContextProvider.getBean(FaultService.class);
+        List<BicycleWithFault> bicycleWithFaultList = new ArrayList<>();
+        for (Bicycle bicycle : bicycleList) {
+
+            Integer bicycleId = bicycle.getId();
+
+            BicycleWithFault bicycleWithFault = new BicycleWithFault();
+            bicycleWithFault.setBicycle(bicycle);
+
+            //查该单车的所有fault
+            List<BicycleFault> bicycleFaults = bicycleFaultService.listByBicycleId(bicycleId);
+            for (BicycleFault bicycleFault : bicycleFaults) {
+                Fault fault = faultService.getById(bicycleFault.getFaultId());
+                bicycleWithFault.addFault(fault);
+            }
+
+            bicycleWithFaultList.add(bicycleWithFault);
+        }
+        return bicycleWithFaultList;
     }
 
     @Override
@@ -216,7 +253,7 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
     }
 
     @Override
-    public Object postBicycleTrails(Bicycle bicycle, TUser user) {
+    public Integer postBicycleTrails(Bicycle bicycle, TUser user) {
         //1 从redis缓存拿到bicycle信息
         String key = "bicycle" + bicycle.getId() + "-" + "user" + user.getUserId();
         String jsonString = redisMapTools.hGet(TRAILS_MAP_KEY, key, String.class);
@@ -231,5 +268,19 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         String newJson = JSONObject.toJSONString(bicycleUsing);
         redisMapTools.hput(TRAILS_MAP_KEY,key,newJson);
         return 1;
+    }
+
+    @Override
+    public List<Bicycle> listStateBicycles(Integer state) {
+        QueryWrapper<Bicycle> bicycleQueryWrapper = new QueryWrapper<>();
+        bicycleQueryWrapper.eq("state",state);
+        return list(bicycleQueryWrapper);
+    }
+
+    @Override
+    public List<Bicycle> listHealthyBicycles() {
+        QueryWrapper<Bicycle> bicycleQueryWrapper = new QueryWrapper<>();
+        bicycleQueryWrapper.in("state",0,1);
+        return list(bicycleQueryWrapper);
     }
 }

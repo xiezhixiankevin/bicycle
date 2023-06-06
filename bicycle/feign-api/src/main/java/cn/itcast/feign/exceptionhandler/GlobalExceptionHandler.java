@@ -21,7 +21,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public R error(Exception e){
         e.printStackTrace();
-        return R.error().message("执行了全局异常");
+        return R.error().message("执行了全局异常:"+e.getMessage());
     }
 
     //文件大小异常处理MaxUploadSizeExceededException
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
     @ResponseBody
     public R error(ArithmeticException e){
         e.printStackTrace();
-        return R.error().message("执行了自定义异常");
+        return R.error().message("执行了自定义异常:"+e.getMessage());
     }
 
     @ExceptionHandler(GuliException.class)

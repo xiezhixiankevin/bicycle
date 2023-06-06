@@ -4,6 +4,17 @@ server:
 spring:
   application:
     name: gateway
+  redis:
+    host: 8.130.92.141
+    port: 6379
+    password: root
+    lettuce:
+      pool:
+        max-active: 10
+        max-idle: 10
+        min-idle: 1
+        time-between-eviction-runs: 10s
+    database: 1
   cloud:
     nacos:
       discovery:
@@ -11,7 +22,8 @@ spring:
     gateway:
       routes:
         - id: user-service
-          uri: lb://userservice
+#          uri: lb://userservice
+          uri: http://localhost:8081/
           predicates:
             - name: Path
               args:
@@ -19,7 +31,8 @@ spring:
           filters:
             - StripPrefix=1
         - id: bicycle-service
-          uri: lb://bicycleservice
+#          uri: lb://bicycleservice
+          uri: http://localhost:8082/
           predicates:
             - name: Path
               args:

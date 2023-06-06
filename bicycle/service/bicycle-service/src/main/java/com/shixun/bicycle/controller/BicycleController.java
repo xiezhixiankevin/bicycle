@@ -50,6 +50,19 @@ public class BicycleController {
         return R.ok().data("list",bicycleService.listFaultBicycles(faultId));
     }
 
+    // 获取某一类状态的所有单车，0空闲，1使用，2故障，3已修好带投入使用
+    @GetMapping("/list-state-bicycles")
+    public R listStateBicycles(Integer state){
+        return R.ok().data("list",bicycleService.listStateBicycles(state));
+    }
+
+    // 获取健康单车
+    @GetMapping("/list-healthy-bicycles")
+    public R listHealthyBicycles(){
+        return R.ok().data("list",bicycleService.listHealthyBicycles());
+    }
+
+
     // 列出用户附近的所有单车(附近500m内)
     @GetMapping("/list-surrounding-bicycles")
     public R listSurroundingBicycles(Double jd,Double wd){
@@ -151,7 +164,10 @@ public class BicycleController {
     @PostMapping("/post-bicycle-trails")
     public R postBicycleTrails(Bicycle bicycle,HttpServletRequest request){
         String token = request.getParameter("token");
-        return R.ok().data("trail_info",bicycleService.postBicycleTrails(bicycle,getUserInfoFromToken(token)));
+        if (bicycleService.postBicycleTrails(bicycle,getUserInfoFromToken(token)) == 1){
+            return R.ok();
+        }
+       return R.error().message("当前单车未处于使用状态");
     }
 
     /**

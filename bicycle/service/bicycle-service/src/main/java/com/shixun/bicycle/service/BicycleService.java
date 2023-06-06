@@ -4,6 +4,7 @@ import cn.itcast.feign.pojo.Bicycle;
 import cn.itcast.feign.pojo.TUser;
 import cn.itcast.feign.pojo.pack.BicycleUsing;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.shixun.bicycle.pojo.BicycleWithFault;
 import com.shixun.bicycle.pojo.FixInfo;
 
 import java.util.*;
@@ -20,7 +21,7 @@ public interface BicycleService extends IService<Bicycle> {
 
     List<Bicycle> listBicyclesByIds(List<Integer> ids);
 
-    List<Bicycle> listFaultBicycles(Integer faultId);
+    List<BicycleWithFault> listFaultBicycles(Integer faultId);
 
     List<Bicycle> listSurroundingBicycles(Double jd, Double wd);
 
@@ -40,7 +41,11 @@ public interface BicycleService extends IService<Bicycle> {
 
     void addBicycles(List<Bicycle> bicycles);
 
-    Object postBicycleTrails(Bicycle bicycle, TUser user);
+    Integer postBicycleTrails(Bicycle bicycle, TUser user);
+
+    List<Bicycle> listStateBicycles(Integer state);
+
+    List<Bicycle> listHealthyBicycles();
 
     // 增删改查
 

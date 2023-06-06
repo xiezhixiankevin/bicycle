@@ -17,4 +17,5 @@ public interface BicycleFaultService extends IService<BicycleFault> {
     // 根据某个faultId获取条目
     List<BicycleFault> listByFaultId(Integer id);
 
+    List<BicycleFault> listByBicycleId(Integer bicycleId);
 }

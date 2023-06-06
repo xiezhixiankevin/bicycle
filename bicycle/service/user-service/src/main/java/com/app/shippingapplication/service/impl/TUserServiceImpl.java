@@ -8,6 +8,7 @@ import com.app.shippingapplication.service.TUserService;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.JWTCreator;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -87,5 +88,24 @@ public class TUserServiceImpl extends ServiceImpl<TUserMapper, TUser> implements
             return userPack;
         }
         return null;
+    }
+
+    @Override
+    public Boolean updatePassword(String email, String code, String password, RedisTemplate<String, String> redisTemplate) {
+
+        ValueOperations<String, String> forValue = redisTemplate.opsForValue();
+        String realCode = forValue.get(email + "-shixun-update-password-code");
+        if(realCode ==null){
+            return false;
+        }else if(realCode.equals(code)){
+            // 验证码正确
+            TUser user = new TUser();
+            user.setUserPassword(password);
+            UpdateWrapper<TUser> updateWrapper = new UpdateWrapper<>();
+            updateWrapper.eq("user_email",email);
+            update(user,updateWrapper);
+            return true;
+        }
+        return false;
     }
 }

@@ -43,6 +43,33 @@ public class TUserController {
         return R.error().message("用户名或密码错误！或者系统限流请稍后重试");
     }
 
+    @GetMapping("/get-update-password-code")
+    public R getUpdatePasswordCode(@RequestParam String email){
+        ValueOperations<String, String> valueOperations = redisTemplate.opsForValue();
+        if(valueOperations.get(email + "-shixun-update-password-code") != null){
+            return R.error().message("验证码已发送且未过期，请勿反复点击！");
+        }
+        String code = randomCode();
+        valueOperations.set(email + "-shixun-update-password-code",code);
+        // 有效时间6分钟
+        redisTemplate.expire(email + "-shixun-update-password-code", 6*60*1000, TimeUnit.MILLISECONDS);
+        emailUtils.sendSimpleMail(email,
+                "ShippingApp修改密码验证码",
+                "您的验证码是:"+code + "。请勿泄露验证码，有效时间6分钟。");
+        return R.ok().message("验证码已发送，请查看邮箱！");
+    }
+
+    @PostMapping("/update-password")
+    public R updatePassword(@RequestParam String email,
+                            @RequestParam String code,
+                            @RequestParam String password){
+        Boolean success = userService.updatePassword(email, code,password,redisTemplate);
+        if(success){
+            return R.ok();
+        }
+        return R.error().message("验证码错误或已过期或邮箱错误！或者系统限流请稍后重试");
+    }
+
     @PostMapping("/register")
     public R register(@RequestBody UserPack userPack){
         // 校验验证码

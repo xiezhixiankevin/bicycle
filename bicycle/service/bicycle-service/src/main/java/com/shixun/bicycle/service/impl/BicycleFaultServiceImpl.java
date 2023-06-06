@@ -27,4 +27,11 @@ public class BicycleFaultServiceImpl extends ServiceImpl<BicycleFaultMapper, Bic
         bicycleFaultWrapper.eq("fault_id",id);
         return list(bicycleFaultWrapper);
     }
+
+    @Override
+    public List<BicycleFault> listByBicycleId(Integer bicycleId) {
+        QueryWrapper<BicycleFault> bicycleFaultWrapper = new QueryWrapper<>();
+        bicycleFaultWrapper.eq("bicycle_id",bicycleId);
+        return list(bicycleFaultWrapper);
+    }
 }
