@@ -19,7 +19,7 @@ import java.util.*;
 public class BicycleWithFault {
 
     private Bicycle bicycle;
-    private List<Fault> faults;
+    private List<Fault> faults = new ArrayList<>();
 
     public BicycleWithFault addFault(Fault fault){
         faults.add(fault);
