@@ -131,6 +131,15 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
 
         BicycleFaultService bicycleFaultService = ApplicationContextProvider.getBean(BicycleFaultService.class);
 
+        // 不能重复添加相同故障
+        QueryWrapper<BicycleFault> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("bicycle_id",bicycle);
+        queryWrapper.eq("fault_id",faultId);
+        if(bicycleFaultService.getOne(queryWrapper) != null){
+            return 0;
+        };
+
+
         UpdateWrapper<Bicycle> updateWrapper = new UpdateWrapper<>();
         updateWrapper.eq("id",bicycleId);
         updateWrapper.ne("state",Bicycle.USING);
