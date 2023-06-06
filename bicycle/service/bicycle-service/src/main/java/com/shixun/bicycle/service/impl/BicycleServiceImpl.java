@@ -222,6 +222,7 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         //3 删除redis缓存，修改数据库
         redisMapTools.hDelete(TRAILS_MAP_KEY,key);
         bicycleUsing.getBicycle().setState(Bicycle.FREE);
+        bicycleUsing.getBicycle().setMileage(bicycle.getMileage()+bicycleUsing.getBicycle().getMileage());
         updateById(bicycleUsing.getBicycle());
         return 1;
     }
@@ -270,8 +271,11 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         if(jsonString == null){
             return 0;
         }
-        //3 修改单车轨迹数组
+        //3 修改单车轨迹数组和当前位置，以及里程
         BicycleUsing bicycleUsing = JSONObject.parseObject(jsonString, BicycleUsing.class);
+        bicycleUsing.getBicycle().setMileage(bicycle.getMileage()+bicycleUsing.getBicycle().getMileage());
+        bicycleUsing.getBicycle().setJd(bicycle.getJd());
+        bicycleUsing.getBicycle().setWd(bicycle.getWd());
         bicycleUsing.getTrails().add(new Location(bicycle.getJd(),bicycle.getWd()));
         //4 写回redis
         String newJson = JSONObject.toJSONString(bicycleUsing);

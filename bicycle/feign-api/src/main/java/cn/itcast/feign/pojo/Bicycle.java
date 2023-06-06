@@ -49,5 +49,11 @@ public class Bicycle implements Serializable {
      */
     private Integer area = 0;
 
+    /**
+     * 单车里程
+     */
+    private Double mileage = 0.0;
+
+
 
 }
