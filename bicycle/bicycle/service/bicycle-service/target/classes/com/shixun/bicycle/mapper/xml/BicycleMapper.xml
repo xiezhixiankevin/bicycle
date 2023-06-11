@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.shixun.bicycle.mapper.BicycleMapper">
+
+    <!-- 通用查询映射结果 -->
+    <resultMap id="BaseResultMap" type="cn.itcast.feign.pojo.Bicycle">
+        <id column="id" property="id" />
+        <result column="jd" property="jd" />
+        <result column="wd" property="wd" />
+        <result column="state" property="state" />
+        <result column="area" property="area" />
+        <result column="mileage" property="mileage" />
+    </resultMap>
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        id, jd, wd, state, area, mileage
+    </sql>
+
+</mapper>
