@@ -111,7 +111,12 @@ public class TokenInterceptor implements GlobalFilter {
         ServerHttpResponse serverHttpResponse = exchange.getResponse();
         // 获取 token 参数
         String token = serverHttpRequest.getHeaders().getFirst("token");
-
+        if(token == null){
+            map.put("message","无token！");
+            map.put("success",false);  // 设置状态
+            // 将map以json的形式响应到前台  map --> json  (jackson)
+            return getVoidMono(serverHttpResponse, map);
+        }
         if (StringUtils.isBlank(token)) {
             serverHttpResponse.setStatusCode(HttpStatus.UNAUTHORIZED);
             map.put("message","无token！");

@@ -91,6 +91,36 @@ public class TUserServiceImpl extends ServiceImpl<TUserMapper, TUser> implements
     }
 
     @Override
+    public UserPack loginAdmin(String email, String password) {
+        QueryWrapper<TUser> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_email",email);
+        queryWrapper.eq("user_password",password);
+        queryWrapper.eq("identify",1);
+        TUser userAccount = getOne(queryWrapper);
+        if(userAccount != null){
+            // 生成token
+
+            //创建jwt builder
+            JWTCreator.Builder builder = JWT.create();
+
+            builder.withClaim("user_id",userAccount.getUserId());
+            builder.withClaim("email",email);
+            builder.withClaim("username",userAccount.getUserName());
+            builder.withClaim("identify",userAccount.getIdentify());
+
+            String token = JWTUtils.getToken(builder);
+
+            UserPack userPack = new UserPack();
+            userPack.setUserEmail(email);
+            userPack.setUserName(userAccount.getUserName());
+            userPack.setIdentify(userAccount.getIdentify());
+            userPack.setToken(token);
+            return userPack;
+        }
+        return null;
+    }
+
+    @Override
     public Boolean updatePassword(String email, String code, String password, RedisTemplate<String, String> redisTemplate) {
 
         ValueOperations<String, String> forValue = redisTemplate.opsForValue();

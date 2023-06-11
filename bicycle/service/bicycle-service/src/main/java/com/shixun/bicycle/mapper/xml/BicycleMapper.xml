@@ -10,11 +10,12 @@
         <result column="state" property="state" />
         <result column="area" property="area" />
         <result column="mileage" property="mileage" />
+        <result column="description" property="description" />
     </resultMap>
 
     <!-- 通用查询结果列 -->
     <sql id="Base_Column_List">
-        id, jd, wd, state, area, mileage
+        id, jd, wd, state, area, mileage, description
     </sql>
 
 </mapper>

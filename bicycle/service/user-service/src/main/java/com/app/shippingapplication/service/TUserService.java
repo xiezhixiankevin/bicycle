@@ -21,5 +21,8 @@ public interface TUserService extends IService<TUser> {
     // 登录方法
     UserPack login(String email, String password);
 
+    // 登录方法
+    UserPack loginAdmin(String email, String password);
+
     Boolean updatePassword(String email,String code, String password, RedisTemplate<String, String> redisTemplate);
 }

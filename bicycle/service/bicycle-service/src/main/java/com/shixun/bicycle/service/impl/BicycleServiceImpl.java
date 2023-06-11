@@ -113,7 +113,7 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
 
         for (Bicycle bicycle : list) {
             double distance = DistanceUtil.getDistance(jd,wd,bicycle.getJd(),bicycle.getWd());
-            if (distance <= 500.0){
+            if (distance <= 1000.0){
                 result.add(bicycle);
             }
         }
@@ -133,7 +133,7 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
 
         // 不能重复添加相同故障
         QueryWrapper<BicycleFault> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("bicycle_id",bicycle);
+        queryWrapper.eq("bicycle_id",bicycleId);
         queryWrapper.eq("fault_id",faultId);
         if(bicycleFaultService.getOne(queryWrapper) != null){
             return 0;
@@ -167,7 +167,7 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         queryWrapper.eq("bicycle_id",fixInfo.getBicycleId());
 
         List<BicycleFault> bicycleHaveFaults = bicycleFaultService.list(queryWrapper);
-        if(bicycleHaveFaults != null){
+        if(!bicycleHaveFaults.isEmpty()){
             return 1;
         }
         // 完全修好了

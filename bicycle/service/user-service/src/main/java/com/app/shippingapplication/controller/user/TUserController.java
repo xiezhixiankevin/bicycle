@@ -2,6 +2,7 @@ package com.app.shippingapplication.controller.user;
 
 
 import cn.itcast.feign.common.R;
+import cn.itcast.feign.pojo.TUser;
 import cn.itcast.feign.pojo.pack.UserPack;
 import com.app.shippingapplication.service.TUserService;
 import com.app.shippingapplication.util.EmailUtils;
@@ -41,6 +42,28 @@ public class TUserController {
             return R.ok().data("user_info",user).data("token",token);
         }
         return R.error().message("用户名或密码错误！或者系统限流请稍后重试");
+    }
+
+    @PostMapping("/login-admin")
+    public R loginAdmin(@RequestParam String email,
+                   @RequestParam String password){
+        UserPack user = userService.loginAdmin(email, password);
+        if(user != null){
+            String token = user.getToken();
+            user.setToken(null);
+            return R.ok().data("user_info",user).data("token",token);
+        }
+        return R.error().message("用户名或密码错误!或不具备管理员权限！！");
+    }
+
+
+    @PostMapping("/send-email-to-user")
+    public R sendEmailToUser(@RequestParam Integer userId){
+        TUser user = userService.getById(userId);
+        emailUtils.sendSimpleMail(user.getUserEmail(),
+                "单车系统警告！",
+                "您好，您已骑出本系统规定范围，请立即返回，否则即将远程锁车。。。");
+        return R.ok().message("已发送警告邮件");
     }
 
     @GetMapping("/get-update-password-code")

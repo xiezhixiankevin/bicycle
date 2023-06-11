@@ -63,7 +63,7 @@ public class BicycleController {
     }
 
 
-    // 列出用户附近的所有单车(附近500m内)
+    // 列出用户附近的所有单车(附近1km内)
     @GetMapping("/list-surrounding-bicycles")
     public R listSurroundingBicycles(Double jd,Double wd){
         return R.ok().data("list",bicycleService.listSurroundingBicycles(jd,wd));
@@ -86,7 +86,7 @@ public class BicycleController {
      *
      */
     @PutMapping("/fix-bicycle-fault")
-    public R fixBicycle(String params){
+    public R fixBicycle(@RequestBody String params){
         FixInfo fixInfo = JSONObject.parseObject(params, FixInfo.class);
         Integer result = bicycleService.fixBicycleFault(fixInfo);
         if(result == 1){
@@ -107,7 +107,7 @@ public class BicycleController {
      *
      */
     @PutMapping("/add-running-bicycles")
-    public R addRunningBicycles(String params){
+    public R addRunningBicycles(@RequestBody String params){
         List<Integer> list = JSONObject.parseArray(params,Integer.class);
         bicycleService.addRunnableBicycles(list);
         return R.ok();
@@ -163,7 +163,7 @@ public class BicycleController {
      * */
     @PostMapping("/post-bicycle-trails")
     public R postBicycleTrails(Bicycle bicycle,HttpServletRequest request){
-        String token = request.getParameter("token");
+        String token = request.getHeader("token");
         if (bicycleService.postBicycleTrails(bicycle,getUserInfoFromToken(token)) == 1){
             return R.ok();
         }

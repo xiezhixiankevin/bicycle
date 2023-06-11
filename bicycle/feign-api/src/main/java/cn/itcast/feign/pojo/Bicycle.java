@@ -54,6 +54,11 @@ public class Bicycle implements Serializable {
      */
     private Double mileage = 0.0;
 
+    /**
+     * 描述
+     */
+    private String description = "我是一辆共享单车O(∩_∩)O";
+
 
 
 }
