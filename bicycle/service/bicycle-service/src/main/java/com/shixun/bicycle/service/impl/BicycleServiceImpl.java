@@ -296,4 +296,26 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         bicycleQueryWrapper.in("state",0,1);
         return list(bicycleQueryWrapper);
     }
+
+    @Override
+    public Integer addBicyclesLanya(Bicycle bicycle) {
+        QueryWrapper<Bicycle> bicycleQueryWrapper = new QueryWrapper<>();
+        bicycleQueryWrapper.eq("lanyaid",bicycle.getLanyaid());
+        if(getOne(bicycleQueryWrapper) != null){
+            return 0;
+        }
+        save(bicycle);
+        return 1;
+    }
+
+    @Override
+    public Integer getBicycleIdByLanyaId(String lanyaid) {
+        QueryWrapper<Bicycle> bicycleQueryWrapper = new QueryWrapper<>();
+        bicycleQueryWrapper.eq("lanyaid",lanyaid);
+        Bicycle one = getOne(bicycleQueryWrapper);
+        if(one != null){
+            return one.getId();
+        }
+        return -1;
+    }
 }

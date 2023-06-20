@@ -10,6 +10,7 @@ import com.auth0.jwt.interfaces.DecodedJWT;
 import com.shixun.bicycle.pojo.FixInfo;
 import com.shixun.bicycle.service.BicycleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
@@ -41,6 +42,36 @@ public class BicycleController {
             bicycles.add(new Bicycle());
         }
         bicycleService.addBicycles(bicycles);
+        return R.ok();
+    }
+
+    /**
+     * 根据蓝牙id获取单车id
+     * @param
+     *
+     */
+    @PostMapping("/get-bicycle-id-by-lanyaid")
+    public R addBicycles(String lanyaid){
+        if (lanyaid == null || StringUtils.isEmpty(lanyaid)){
+            return R.error().message("请传入蓝牙id");
+        }
+
+        return R.ok().data("bicycle_id",bicycleService.getBicycleIdByLanyaId(lanyaid));
+    }
+
+    /**
+     * 添加单车
+     * @param bicycle:其中lanyaid必传
+     *
+     */
+    @PostMapping("/add-bicycles-lanya")
+    public R addBicycles(Bicycle bicycle){
+        if (bicycle.getLanyaid() == null || StringUtils.isEmpty(bicycle.getLanyaid())){
+            return R.error().message("请传入蓝牙id");
+        }
+        if(bicycleService.addBicyclesLanya(bicycle) == 0){
+            return R.error().message("蓝牙id重复");
+        }
         return R.ok();
     }
 
@@ -110,6 +141,17 @@ public class BicycleController {
     public R addRunningBicycles(@RequestBody String params){
         List<Integer> list = JSONObject.parseArray(params,Integer.class);
         bicycleService.addRunnableBicycles(list);
+        return R.ok();
+    }
+
+    /**
+     * 将修好的车投入运行
+     * @param idList:自行车id数组
+     *
+     */
+    @PutMapping("/add-running-bicycles-new")
+    public R addRunningBicycles(@RequestParam List<Integer> idList){
+        bicycleService.addRunnableBicycles(idList);
         return R.ok();
     }
 

@@ -59,6 +59,11 @@ public class Bicycle implements Serializable {
      */
     private String description = "我是一辆共享单车O(∩_∩)O";
 
+    /**
+     * 描述
+     */
+    private String lanyaid = "xasxasx123";
+
 
 
 }

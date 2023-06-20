@@ -6,6 +6,7 @@ import cn.itcast.feign.pojo.pack.BicycleUsing;
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.shixun.bicycle.pojo.BicycleWithFault;
 import com.shixun.bicycle.pojo.FixInfo;
+import io.swagger.models.auth.In;
 
 import java.util.*;
 
@@ -46,6 +47,10 @@ public interface BicycleService extends IService<Bicycle> {
     List<Bicycle> listStateBicycles(Integer state);
 
     List<Bicycle> listHealthyBicycles();
+
+    Integer addBicyclesLanya(Bicycle bicycle);
+
+    Integer getBicycleIdByLanyaId(String lanyaid);
 
     // 增删改查
 
