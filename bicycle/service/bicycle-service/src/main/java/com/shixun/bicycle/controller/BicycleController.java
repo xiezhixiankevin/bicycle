@@ -2,13 +2,16 @@ package com.shixun.bicycle.controller;
 
 
 import cn.itcast.feign.common.R;
+import cn.itcast.feign.pojo.Area;
 import cn.itcast.feign.pojo.Bicycle;
 import cn.itcast.feign.pojo.TUser;
 import cn.itcast.feign.util.JWTUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.auth0.jwt.interfaces.DecodedJWT;
 import com.shixun.bicycle.pojo.FixInfo;
+import com.shixun.bicycle.service.AreaService;
 import com.shixun.bicycle.service.BicycleService;
+import com.shixun.bicycle.utils.PredictAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.*;
@@ -29,6 +32,8 @@ import java.util.*;
 public class BicycleController {
     @Autowired
     private BicycleService bicycleService;
+    @Autowired
+    private AreaService areaService;
 
     /**
      * 添加单车
@@ -194,9 +199,17 @@ public class BicycleController {
     }
 
     // 肖景方 获取最佳停车点
-    @GetMapping("/get-best-stop-point")
-    public R getBestStopPoint(){
-        return R.ok();
+    @GetMapping("/get-best-stop-point/{jd}/{wd}")
+    public R getBestStopPoint (@PathVariable("jd") double jd, @PathVariable("wd") double wd) {
+        int area = new PredictAlgorithm().readlist(jd, wd);
+        if(area == -1){
+            return R.error();
+        }
+        else {
+            List<Area> areaList = areaService.listByAreaId(area);
+            System.out.println(areaList);
+            return R.ok().data("area", areaList.get(0));
+        }
     }
 
     /**

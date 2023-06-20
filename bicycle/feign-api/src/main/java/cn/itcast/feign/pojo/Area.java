@@ -12,7 +12,7 @@ import java.io.Serializable;
 
 /**
  * <p>
- * 
+ *
  * </p>
  *
  * @author xzx
@@ -40,5 +40,6 @@ public class Area implements Serializable {
      */
     private String zbArray;
 
-
+    private double jd;
+    private double wd;
 }

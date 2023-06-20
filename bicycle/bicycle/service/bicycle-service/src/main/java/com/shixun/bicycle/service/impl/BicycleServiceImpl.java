@@ -223,6 +223,8 @@ public class BicycleServiceImpl extends ServiceImpl<BicycleMapper, Bicycle> impl
         redisMapTools.hDelete(TRAILS_MAP_KEY,key);
         bicycleUsing.getBicycle().setState(Bicycle.FREE);
         bicycleUsing.getBicycle().setMileage(bicycle.getMileage()+bicycleUsing.getBicycle().getMileage());
+        bicycleUsing.getBicycle().setJd(bicycle.getJd());
+        bicycleUsing.getBicycle().setWd(bicycle.getWd());
         updateById(bicycleUsing.getBicycle());
         return 1;
     }
