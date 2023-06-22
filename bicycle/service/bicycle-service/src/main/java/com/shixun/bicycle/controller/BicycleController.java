@@ -145,6 +145,32 @@ public class BicycleController {
         return R.error();
     }
 
+    /**
+     * 修复单车的一个或多个故障
+     * @param fixInfo:json格式字符串,格式参照FixInfo
+     *
+     */
+    @PutMapping("/fix-bicycle-fault-1")
+    public R fixBicycle(@RequestParam FixInfo fixInfo){
+        Integer result = bicycleService.fixBicycleFault(fixInfo);
+        if(result == 1){
+            return R.ok();
+        }
+        return R.error();
+    }
+
+    @PutMapping("/fix-bicycle-single-fault")
+    public R fixBicycle(Integer bicycleId,Integer faultId){
+        ArrayList<Integer> faultIds  = new ArrayList<>();
+        faultIds.add(faultId);
+        FixInfo fixInfo = new FixInfo(bicycleId,faultIds);
+        Integer result = bicycleService.fixBicycleFault(fixInfo);
+        if(result == 1){
+            return R.ok();
+        }
+        return R.error();
+    }
+
     // 获取已经修好的车
     @GetMapping("/get-fixed-bicycles")
     public R getFixedBicycles(){
