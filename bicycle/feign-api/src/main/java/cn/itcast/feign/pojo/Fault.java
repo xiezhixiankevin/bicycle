@@ -34,5 +34,7 @@ public class Fault implements Serializable {
 
     private Integer level;
 
+    private String description;
+
 
 }

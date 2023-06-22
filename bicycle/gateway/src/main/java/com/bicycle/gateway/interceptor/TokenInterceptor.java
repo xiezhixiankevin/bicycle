@@ -41,8 +41,12 @@ public class TokenInterceptor implements GlobalFilter {
 
     public TokenInterceptor() {
         excludePathList.add("/user/login");
+        excludePathList.add("/user/login-admin");
         excludePathList.add("/user/register");
+        excludePathList.add("/user/update-password");
         excludePathList.add("/user/get-register-code");
+        excludePathList.add("/user/get-update-password-code");
+        excludePathList.add("/user/get-update-password-code");
     }
 
     /**

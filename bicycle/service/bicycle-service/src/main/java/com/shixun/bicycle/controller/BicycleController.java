@@ -111,6 +111,20 @@ public class BicycleController {
 
     }
 
+    // 修改单车信息
+    @PostMapping("/update-bicycle-info")
+    public R updateBicycleInfo(Bicycle bicycle){
+        bicycle.setState(null);
+        bicycle.setJd(null);
+        bicycle.setWd(null);
+        bicycle.setMileage(null);
+        bicycle.setArea(null);
+        bicycle.setLanyaid(null);
+        bicycleService.updateById(bicycle);
+        return R.ok();
+
+    }
+
     /**
      * 修复单车的一个或多个故障
      * @param params:json格式字符串,格式参照FixInfo
@@ -144,14 +158,29 @@ public class BicycleController {
         return R.ok();
     }
 
+//    /**
+//     * 将修好的车投入运行
+//     * @param idList:自行车id数组
+//     *
+//     */
+//    @PutMapping("/add-running-bicycles-plus")
+//    public R addRunningBicycles(@RequestParam("idList[]") List<Integer> idList){
+//        bicycleService.addRunnableBicycles(idList);
+//        return R.ok();
+//    }
+
+
+
     /**
-     * 将修好的车投入运行
-     * @param idList:自行车id数组
+     * 将修好的车投入运行(一辆)
+     * @param id:自行车id
      *
      */
     @PutMapping("/add-running-bicycles-new")
-    public R addRunningBicycles(@RequestParam List<Integer> idList){
-        bicycleService.addRunnableBicycles(idList);
+    public R addRunningBicycles(@RequestParam Integer id){
+        ArrayList<Integer> arrayList = new ArrayList<>();
+        arrayList.add(id);
+        bicycleService.addRunnableBicycles(arrayList);
         return R.ok();
     }
 
